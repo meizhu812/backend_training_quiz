@@ -1,5 +1,5 @@
-import exception.InvalidTicketException;
-import exception.ParkingLotFullException;
+import parking.InvalidTicketException;
+import parking.ParkingLotFullException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

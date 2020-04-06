@@ -1,4 +1,4 @@
-package exception;
+package parking;
 
 public class ParkingLotFullException extends RuntimeException {
 
