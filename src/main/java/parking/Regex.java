@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum Regex {
+    MainOption("[1234]", "选项"),
     InitRegex("A:(?<countA>\\d{1,2}),B:(?<countB>\\d{1,2})", "初始化数据");
 
     public String getName() {
@@ -25,7 +26,7 @@ public enum Regex {
 
     public void validate(String string) throws InvalidInput {
         if (!matches(string)) {
-            throw new InvalidInput();
+            throw new InvalidInput(name);
         }
     }
 

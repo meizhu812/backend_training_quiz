@@ -12,14 +12,16 @@ public class Application {
 
     public static void operateParking() {
         while (true) {
-            System.out.println("1. 初始化停车场数据\n2. 停车\n3. 取车\n4. 退出\n请输入你的选择(1~4)：");
-            Scanner printItem = new Scanner(System.in);
-            String choice = printItem.next();
-            if (choice.equals("4")) {
-                System.out.println("系统已退出");
-                break;
+            try {
+                String input = getValidInput("1. 初始化停车场数据\n2. 停车\n3. 取车\n4. 退出\n请输入你的选择(1~4)：", Regex.MainOption);
+                if (input.equals("4")) {
+                    System.out.println("系统已退出");
+                    break;
+                }
+                handle(input);
+            } catch (InvalidInput e) {
+                System.out.println(e.getMessage());
             }
-            handle(choice);
         }
     }
 
