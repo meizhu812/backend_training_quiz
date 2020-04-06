@@ -3,6 +3,7 @@ package parking;
 import repository.ZeroAffected;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class ParkingBuddy {
     private final ParkingStatusRepo statusRepo;
@@ -23,8 +24,18 @@ public class ParkingBuddy {
     }
 
     public String fetchCar(ParkingStatus ticket) throws SQLException {
-        ParkingStatus car = statusRepo.queryByKeys(ticket.getRegion(), ticket.getSerial())
+        ParkingStatus parkedCar = statusRepo.queryByKeys(ticket.getRegion(), ticket.getSerial())
                 .orElseThrow(InvalidTicketException::new);
-        return car.getPlateNo();
+        String plateNo = Optional.ofNullable(parkedCar.getPlateNo()).orElseThrow(InvalidTicketException::new);
+        if (!plateNo.equals(ticket.getPlateNo())) {
+            throw new InvalidTicketException();
+        }
+        parkedCar.setPlateNo(null);
+        try {
+            statusRepo.updateByEntity(parkedCar);
+        } catch (ZeroAffected zeroAffected) {
+            throw new SQLException(zeroAffected);
+        }
+        return plateNo;
     }
 }

@@ -21,7 +21,7 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_return_ticket_information_when_park_given_init_and_car_and_general_boy() throws SQLException {
+    void should_return_ticket_information_when_park_given_init_and_car_and_general_boy() throws SQLException, InvalidInput {
         console.init("A:2,B:2");
 
         String aTicket = console.park("A12098");
@@ -33,7 +33,7 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_throw_exception_with_message_when_park_given_init_and_car_and_general_boy() throws SQLException {
+    void should_throw_exception_with_message_when_park_given_init_and_car_and_general_boy() throws SQLException, InvalidInput {
         console.init("A:1,B:1");
         console.park("A12908");
         console.park("B38201");
@@ -41,7 +41,7 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_return_car_information_when_fetch_given_ticket_and_car() throws SQLException {
+    void should_return_car_information_when_fetch_given_ticket_and_car() throws SQLException, InvalidInput {
         console.init("A:8,B:10");
 
         String aTicket = console.park("A12198");
@@ -58,16 +58,16 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_throw_exception_with_message_when_fetch_given_ticket_information_is_not_correct() throws SQLException {
+    void should_throw_exception_with_message_when_fetch_given_ticket_information_is_not_correct() throws SQLException, InvalidInput {
         console.init("A:8,B:10");
 
-        assertThrows(InvalidTicketException.class, () -> console.fetch("C,1,A12098"));
+        assertThrows(InvalidInput.class, () -> console.fetch("C,1,A12098"));
         assertThrows(InvalidTicketException.class, () -> console.fetch("A,9,A12098"), "停车券无效");
         assertThrows(InvalidInput.class, () -> console.fetch("B,-1,A12098"), "输入错误！ -> 不合法的停车券\n");
     }
 
     @Test
-    void should_throw_exception_with_message_when_fetch_given_spacee_has_no_car() throws SQLException {
+    void should_throw_exception_with_message_when_fetch_given_spacee_has_no_car() throws SQLException, InvalidInput {
         console.init("A:8,B:10");
 
         String aTicket = console.park("A12098");
@@ -77,7 +77,7 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_throw_exception_with_message_when_fetch_given_space_is_other_car() throws SQLException {
+    void should_throw_exception_with_message_when_fetch_given_space_is_other_car() throws SQLException, InvalidInput {
         console.init("A:8,B:10");
 
         String aTicket = console.park("A12098");

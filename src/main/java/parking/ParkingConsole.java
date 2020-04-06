@@ -44,8 +44,7 @@ public class ParkingConsole {
             case "1":
                 while (true) {
                     try {
-                        String input = getValidInput("请输入初始化数据\n格式为\"停车场编号1：车位数,停车场编号2：车位数\" 如 \"A:8,B:9\"：", Regex.InitRegex);
-                        init(input);
+                        init(getInput("请输入初始化数据\n格式为\"停车场编号1：车位数,停车场编号2：车位数\" 如 \"A:8,B:9\"："));
                         System.out.println("停车位初始化成功！");
                         break;
                     } catch (InvalidInput e) {
@@ -61,9 +60,8 @@ public class ParkingConsole {
                 break;
             }
             case "3": {
-                System.out.println("请输入停车券信息\n格式为\"停车场编号1,车位编号,车牌号\" 如 \"A,1,8\"：");
-                String ticket = SC.next();
-                String car = fetch(ticket);
+                String input = getValidInput("请输入停车券信息\n格式为\"停车场编号1,车位编号,车牌号\" 如 \"A,1,8\"：", Regex.Ticket);
+                String car = fetch(input);
                 System.out.format("已为您取到车牌号为%s的车辆，很高兴为您服务，祝您生活愉快!\n", car);
                 break;
             }
@@ -71,8 +69,8 @@ public class ParkingConsole {
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public void init(String initInfo) throws SQLException {
-        Matcher matcher = Regex.InitRegex.getMatcher(initInfo).get();
+    public void init(String initInfo) throws SQLException, InvalidInput {
+        Matcher matcher = Regex.InitRegex.getMatcher(initInfo);
         int countA = Integer.parseInt(matcher.group("countA"));
         int countB = Integer.parseInt(matcher.group("countB"));
         List<ParkingStatus> initPlaces = new ArrayList<>();
@@ -87,11 +85,17 @@ public class ParkingConsole {
 
     public String park(String carNumber) throws SQLException {
         ParkingStatus ticket = MANAGER.parkCar(carNumber);
-        return String.format("%s,%d,%s",ticket.getRegion(),ticket.getSerial(),ticket.getPlateNo());
+        return String.format("%s,%d,%s", ticket.getRegion(), ticket.getSerial(), ticket.getPlateNo());
     }
 
-    public String fetch(String ticket) {
-        return "";
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public String fetch(String ticket) throws SQLException, InvalidInput {
+        Matcher matcher = Regex.Ticket.getMatcher(ticket);
+        ParkingStatus parkingTicket = new ParkingStatus(
+                matcher.group("region"),
+                Integer.parseInt(matcher.group("serial")),
+                matcher.group("plate"));
+        return MANAGER.fetchCar(parkingTicket);
     }
 
     private String getValidInput(String prompt, Regex regex) throws InvalidInput {
@@ -99,5 +103,9 @@ public class ParkingConsole {
         String input = SC.next();
         regex.validate(input);
         return input;
+    }
+    private String getInput(String prompt){
+        System.out.println(prompt);
+        return SC.next();
     }
 }

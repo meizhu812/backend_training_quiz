@@ -36,12 +36,12 @@ public enum Regex {
         }
     }
 
-    public Optional<Matcher> getMatcher(String target) {
+    public Matcher getMatcher(String target) throws InvalidInput {
         Matcher matcher = pattern.matcher(target);
         if (matcher.matches()) {
-            return Optional.of(matcher);
+            return matcher;
         } else {
-            return Optional.empty();
+            throw new InvalidInput(name);
         }
     }
 }
