@@ -26,6 +26,10 @@ public class ParkingManager implements AutoCloseable {
         return buddy.parkCar(plateNo);
     }
 
+    public String fetchCar(ParkingStatus ticket) throws SQLException {
+        return buddy.fetchCar(ticket);
+    }
+
     @Override
     public void close() {
         connection = null;

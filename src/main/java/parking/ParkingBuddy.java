@@ -2,7 +2,6 @@ package parking;
 
 import repository.ZeroAffected;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ParkingBuddy {
@@ -21,5 +20,11 @@ public class ParkingBuddy {
         } catch (ZeroAffected zeroAffected) {
             throw new SQLException(zeroAffected);
         }
+    }
+
+    public String fetchCar(ParkingStatus ticket) throws SQLException {
+        ParkingStatus car = statusRepo.queryByKeys(ticket.getRegion(), ticket.getSerial())
+                .orElseThrow(InvalidTicketException::new);
+        return car.getPlateNo();
     }
 }
