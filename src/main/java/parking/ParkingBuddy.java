@@ -12,11 +12,12 @@ public class ParkingBuddy {
         this.statusRepo = statusRepo;
     }
 
-    public void parkCar(int carPlate) throws SQLException {
+    public ParkingStatus parkCar(int carPlate) throws SQLException {
         ParkingStatus nextPlace = statusRepo.customQueryFirst("plate_no IS NULL").orElseThrow(ParkingLotFullException::new);
         nextPlace.setPlateNo(carPlate);
         try {
             statusRepo.updateByEntity(nextPlace);
+            return nextPlace;
         } catch (ZeroAffected zeroAffected) {
             throw new SQLException(zeroAffected);
         }

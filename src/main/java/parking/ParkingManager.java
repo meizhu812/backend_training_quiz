@@ -22,8 +22,8 @@ public class ParkingManager implements AutoCloseable {
         statusRepo.init(initPlaces);
     }
 
-    public void parkCar(int plateNo) throws SQLException {
-        buddy.parkCar(plateNo);
+    public ParkingStatus parkCar(int plateNo) throws SQLException {
+        return buddy.parkCar(plateNo);
     }
 
     @Override
