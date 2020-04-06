@@ -17,7 +17,6 @@ class ApplicationTest {
     assertEquals("A,2,B16920", bTicket);
     String cTicket = Application.park("C76129");
     assertEquals("B,1,C76129", cTicket);
-
   }
 
   @Test
