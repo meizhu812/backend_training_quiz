@@ -2,7 +2,7 @@ package parking;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -11,28 +11,31 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class ParkingConsole {
-    private static final Scanner SC = new Scanner(System.in);
+    private final Iterator<String> in;
     public static final String MAIN_MENU_PROMPT = "1. 初始化停车场数据\n2. 停车\n3. 取车\n4. 退出\n请输入你的选择(1~4)：";
-    private static final ParkingManager MANAGER = new ParkingManager();
+    private final ParkingManager manager = new ParkingManager();
+
+    public ParkingConsole() {
+        this(new Scanner(System.in));
+    }
+
+    public ParkingConsole(Iterator<String> in) {
+        this.in = in;
+    }
 
     public void setConnection(Connection connection) {
-        MANAGER.setConnection(connection);
+        manager.setConnection(connection);
     }
 
     public void operateParking() throws SQLException {
         while (true) {
             try {
                 String input = getValidInput(MAIN_MENU_PROMPT, Regex.MainOption);
-                if (input.equals("4")) {
-                    System.out.println("系统已退出");
-                    break;
-                }
                 handle(input);
             } catch (InvalidInput e) {
                 System.out.println(e.getMessage());
             }
         }
-        setConnection(null);
     }
 
     private void handle(String choice) throws SQLException, InvalidInput {
@@ -59,6 +62,11 @@ public class ParkingConsole {
                 System.out.format("已为您取到车牌号为%s的车辆，很高兴为您服务，祝您生活愉快!\n", car);
                 break;
             }
+            case "4": {
+                System.out.println("系统已退出");
+                setConnection(null);
+                break;
+            }
         }
     }
 
@@ -70,11 +78,11 @@ public class ParkingConsole {
                 IntStream.rangeClosed(1, Integer.parseInt(matcher.group("countB")))
                         .mapToObj(n -> new ParkingStatus("B", n, null)))
                 .collect(Collectors.toList());
-        MANAGER.initParkingPlaces(initPlaces);
+        manager.initParkingPlaces(initPlaces);
     }
 
     public String park(String carNumber) throws SQLException {
-        ParkingStatus ticket = MANAGER.parkCar(carNumber);
+        ParkingStatus ticket = manager.parkCar(carNumber);
         return String.format("%s,%d,%s", ticket.getRegion(), ticket.getSerial(), ticket.getPlateNo());
     }
 
@@ -84,18 +92,18 @@ public class ParkingConsole {
                 matcher.group("region"),
                 Integer.parseInt(matcher.group("serial")),
                 matcher.group("plate"));
-        return MANAGER.fetchCar(parkingTicket);
+        return manager.fetchCar(parkingTicket);
     }
 
     private String getValidInput(String prompt, Regex regex) throws InvalidInput {
         System.out.println(prompt);
-        String input = SC.next();
+        String input = in.next();
         regex.validate(input);
         return input;
     }
 
     private String getInput(String prompt) {
         System.out.println(prompt);
-        return SC.next();
+        return in.next();
     }
 }

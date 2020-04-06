@@ -25,6 +25,17 @@ public class ParkingBuddy {
     }
 
     public String fetchCar(ParkingStatus ticket) throws SQLException {
+        ParkingStatus empty = new ParkingStatus(ticket.getRegion(), ticket.getSerial(), null);
+        try {
+            statusRepo.replaceByEntity(ticket, empty);
+            return ticket.getPlateNo();
+        } catch (ZeroAffected zeroAffected) {
+            throw new InvalidTicketException();
+        }
+    }
+
+    @Deprecated
+    public String fetchCarOld(ParkingStatus ticket) throws SQLException {
         ParkingStatus parkedCar = statusRepo.queryByKeys(ticket.getRegion(), ticket.getSerial())
                 .orElseThrow(InvalidTicketException::new);
         String plateNo = Optional.ofNullable(parkedCar.getPlateNo()).orElseThrow(InvalidTicketException::new);
@@ -38,16 +49,5 @@ public class ParkingBuddy {
             throw new SQLException(zeroAffected);
         }
         return plateNo;
-    }
-
-    public String fetchCarNew(ParkingStatus ticket) throws SQLException {
-        ParkingStatus empty = new ParkingStatus(ticket.getRegion(), ticket.getSerial(), null);
-        try {
-            statusRepo.replaceByEntity(ticket, empty);
-            return ticket.getPlateNo();
-        } catch (ZeroAffected zeroAffected) {
-            throw new InvalidTicketException();
-        }
-
     }
 }
