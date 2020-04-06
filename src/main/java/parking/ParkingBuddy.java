@@ -13,7 +13,8 @@ public class ParkingBuddy {
     }
 
     public ParkingStatus parkCar(String carPlate) throws SQLException {
-        ParkingStatus nextPlace = statusRepo.customQueryFirst("WHERE plate_no IS NULL").orElseThrow(ParkingLotFullException::new);
+        ParkingStatus nextPlace = statusRepo.customQueryFirst("WHERE plate_no IS NULL")
+                .orElseThrow(ParkingLotFullException::new);
         nextPlace.setPlateNo(carPlate);
         try {
             statusRepo.updateByEntity(nextPlace);
@@ -37,5 +38,16 @@ public class ParkingBuddy {
             throw new SQLException(zeroAffected);
         }
         return plateNo;
+    }
+
+    public String fetchCarNew(ParkingStatus ticket) throws SQLException {
+        ParkingStatus empty = new ParkingStatus(ticket.getRegion(), ticket.getSerial(), null);
+        try {
+            statusRepo.replaceByEntity(ticket, empty);
+            return ticket.getPlateNo();
+        } catch (ZeroAffected zeroAffected) {
+            throw new InvalidTicketException();
+        }
+
     }
 }
