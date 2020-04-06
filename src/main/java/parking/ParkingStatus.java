@@ -6,18 +6,24 @@ public class ParkingStatus {
     @Key
     private String region;
     @Key
-    private String serial;
+    private int serial;
     @Key
     private String plateNo;
 
     public ParkingStatus() {
     }
 
+    public ParkingStatus(String region, int serial, String plateNo) {
+        this.region = region;
+        this.serial = serial;
+        this.plateNo = plateNo;
+    }
+
     public String getRegion() {
         return region;
     }
 
-    public String getSerial() {
+    public int getSerial() {
         return serial;
     }
 
@@ -29,7 +35,7 @@ public class ParkingStatus {
         this.region = region;
     }
 
-    public void setSerial(String serial) {
+    public void setSerial(int serial) {
         this.serial = serial;
     }
 
