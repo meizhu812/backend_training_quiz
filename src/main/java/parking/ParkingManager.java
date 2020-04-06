@@ -1,6 +1,8 @@
 package parking;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 public class ParkingManager implements AutoCloseable {
     private Connection connection;
@@ -14,8 +16,12 @@ public class ParkingManager implements AutoCloseable {
         statusRepo.setConnection(connection);
     }
 
+    public void initParkingPlaces(List<ParkingStatus> initPlaces) throws SQLException {
+        statusRepo.init(initPlaces);
+    }
+
     @Override
-    public void close(){
+    public void close() {
         connection = null;
         statusRepo.close();
     }
