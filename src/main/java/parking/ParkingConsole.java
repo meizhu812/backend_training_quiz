@@ -1,18 +1,14 @@
 package parking;
 
-import parking.InvalidInput;
-import parking.ParkingManager;
-import parking.ParkingStatus;
-import parking.Regex;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class ParkingConsole {
     private static final Scanner SC = new Scanner(System.in);
@@ -53,33 +49,27 @@ public class ParkingConsole {
                 }
                 break;
             case "2": {
-                String input = getValidInput("请输入车牌号\n格式为\"车牌号\" 如: \"A12098\"：", Regex.PlateNo);
-                String ticket = park(input);
+                String ticket = park(getValidInput("请输入车牌号\n格式为\"车牌号\" 如: \"A12098\"：", Regex.PlateNo));
                 String[] ticketDetails = ticket.split(",");
                 System.out.format("已将您的车牌号为%s的车辆停到%s停车场%s号车位，停车券为：%s，请您妥善保存。\n", ticketDetails[2], ticketDetails[0], ticketDetails[1], ticket);
                 break;
             }
             case "3": {
-                String input = getValidInput("请输入停车券信息\n格式为\"停车场编号1,车位编号,车牌号\" 如 \"A,1,8\"：", Regex.Ticket);
-                String car = fetch(input);
+                String car = fetch(getInput("请输入停车券信息\n格式为\"停车场编号1,车位编号,车牌号\" 如 \"A,1,8\"："));
                 System.out.format("已为您取到车牌号为%s的车辆，很高兴为您服务，祝您生活愉快!\n", car);
                 break;
             }
         }
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void init(String initInfo) throws SQLException, InvalidInput {
         Matcher matcher = Regex.InitRegex.getMatcher(initInfo);
-        int countA = Integer.parseInt(matcher.group("countA"));
-        int countB = Integer.parseInt(matcher.group("countB"));
-        List<ParkingStatus> initPlaces = new ArrayList<>();
-        IntStream.rangeClosed(1, countA)
-                .mapToObj(n -> new ParkingStatus("A", n, null))
-                .forEach(initPlaces::add);
-        IntStream.rangeClosed(1, countB)
-                .mapToObj(n -> new ParkingStatus("B", n, null))
-                .forEach(initPlaces::add);
+        List<ParkingStatus> initPlaces = Stream.concat(
+                IntStream.rangeClosed(1, Integer.parseInt(matcher.group("countA")))
+                        .mapToObj(n -> new ParkingStatus("A", n, null)),
+                IntStream.rangeClosed(1, Integer.parseInt(matcher.group("countB")))
+                        .mapToObj(n -> new ParkingStatus("B", n, null)))
+                .collect(Collectors.toList());
         MANAGER.initParkingPlaces(initPlaces);
     }
 
@@ -88,7 +78,6 @@ public class ParkingConsole {
         return String.format("%s,%d,%s", ticket.getRegion(), ticket.getSerial(), ticket.getPlateNo());
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public String fetch(String ticket) throws SQLException, InvalidInput {
         Matcher matcher = Regex.Ticket.getMatcher(ticket);
         ParkingStatus parkingTicket = new ParkingStatus(
@@ -104,7 +93,8 @@ public class ParkingConsole {
         regex.validate(input);
         return input;
     }
-    private String getInput(String prompt){
+
+    private String getInput(String prompt) {
         System.out.println(prompt);
         return SC.next();
     }
