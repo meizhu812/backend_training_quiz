@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class Application {
     private static final Scanner SC = new Scanner(System.in);
+    public static final String MAIN_MENU_PROMPT = "1. 初始化停车场数据\n2. 停车\n3. 取车\n4. 退出\n请输入你的选择(1~4)：";
 
     public static void main(String[] args) {
         operateParking();
@@ -13,7 +14,7 @@ public class Application {
     public static void operateParking() {
         while (true) {
             try {
-                String input = getValidInput("1. 初始化停车场数据\n2. 停车\n3. 取车\n4. 退出\n请输入你的选择(1~4)：", Regex.MainOption);
+                String input = getValidInput(MAIN_MENU_PROMPT, Regex.MainOption);
                 if (input.equals("4")) {
                     System.out.println("系统已退出");
                     break;
@@ -28,9 +29,15 @@ public class Application {
     private static void handle(String choice) {
         switch (choice) {
             case "1":
-                System.out.println("请输入初始化数据\n格式为\"停车场编号1：车位数,停车场编号2：车位数\" 如 \"A:8,B:9\"：");
-                String initInfo = SC.next();
-                init(initInfo);
+                while (true) {
+                    try {
+                        String input = getValidInput("请输入初始化数据\n格式为\"停车场编号1：车位数,停车场编号2：车位数\" 如 \"A:8,B:9\"：", Regex.InitRegex);
+                        init(input);
+                        break;
+                    } catch (InvalidInput e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
                 break;
             case "2": {
                 System.out.println("请输入车牌号\n格式为\"车牌号\" 如: \"A12098\"：");
