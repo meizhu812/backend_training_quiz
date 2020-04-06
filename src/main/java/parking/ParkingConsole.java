@@ -23,7 +23,7 @@ public class ParkingConsole {
         MANAGER.setConnection(connection);
     }
 
-    public void operateParking() {
+    public void operateParking() throws SQLException {
         while (true) {
             try {
                 String input = getValidInput(MAIN_MENU_PROMPT, Regex.MainOption);
@@ -39,13 +39,14 @@ public class ParkingConsole {
         setConnection(null);
     }
 
-    private void handle(String choice) {
+    private void handle(String choice) throws SQLException {
         switch (choice) {
             case "1":
                 while (true) {
                     try {
                         String input = getValidInput("请输入初始化数据\n格式为\"停车场编号1：车位数,停车场编号2：车位数\" 如 \"A:8,B:9\"：", Regex.InitRegex);
                         init(input);
+                        System.out.println("停车位初始化成功！");
                         break;
                     } catch (InvalidInput e) {
                         System.out.println(e.getMessage());
@@ -71,7 +72,7 @@ public class ParkingConsole {
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public void init(String initInfo) {
+    public void init(String initInfo) throws SQLException {
         Matcher matcher = Regex.InitRegex.getMatcher(initInfo).get();
         int countA = Integer.parseInt(matcher.group("countA"));
         int countB = Integer.parseInt(matcher.group("countB"));
@@ -82,7 +83,7 @@ public class ParkingConsole {
         IntStream.rangeClosed(1, countB)
                 .mapToObj(n -> new ParkingStatus("B", n, null))
                 .forEach(initPlaces::add);
-
+        MANAGER.initParkingPlaces(initPlaces);
     }
 
     public String park(String carNumber) {
