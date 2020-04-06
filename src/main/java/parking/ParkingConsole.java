@@ -39,7 +39,7 @@ public class ParkingConsole {
         setConnection(null);
     }
 
-    private void handle(String choice) throws SQLException {
+    private void handle(String choice) throws SQLException, InvalidInput {
         switch (choice) {
             case "1":
                 while (true) {
@@ -54,9 +54,8 @@ public class ParkingConsole {
                 }
                 break;
             case "2": {
-                System.out.println("请输入车牌号\n格式为\"车牌号\" 如: \"A12098\"：");
-                String carInfo = SC.next();
-                String ticket = park(carInfo);
+                String input = getValidInput("请输入车牌号\n格式为\"车牌号\" 如: \"A12098\"：", Regex.PlateNo);
+                String ticket = park(input);
                 String[] ticketDetails = ticket.split(",");
                 System.out.format("已将您的车牌号为%s的车辆停到%s停车场%s号车位，停车券为：%s，请您妥善保存。\n", ticketDetails[2], ticketDetails[0], ticketDetails[1], ticket);
                 break;

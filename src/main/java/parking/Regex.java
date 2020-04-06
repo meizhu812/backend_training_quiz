@@ -6,7 +6,8 @@ import java.util.regex.Pattern;
 
 public enum Regex {
     MainOption("[1234]", "选项"),
-    InitRegex("A:(?<countA>\\d{1,2}),B:(?<countB>\\d{1,2})", "初始化数据");
+    InitRegex("A:(?<countA>\\d{1,2}),B:(?<countB>\\d{1,2})", "初始化数据"),
+    PlateNo("[A-Z][0-9]{5}", "车牌号");
 
     public String getName() {
         return name;
