@@ -1,17 +1,29 @@
+package parking;
+
 import parking.InvalidInput;
+import parking.ParkingManager;
+import parking.ParkingStatus;
 import parking.Regex;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.stream.IntStream;
 
-public class Application {
+public class ParkingConsole {
     private static final Scanner SC = new Scanner(System.in);
     public static final String MAIN_MENU_PROMPT = "1. 初始化停车场数据\n2. 停车\n3. 取车\n4. 退出\n请输入你的选择(1~4)：";
+    private static final ParkingManager MANAGER = new ParkingManager();
 
-    public static void main(String[] args) {
-        operateParking();
+    public void setConnection(Connection connection) {
+        MANAGER.setConnection(connection);
     }
 
-    public static void operateParking() {
+    public void operateParking() {
         while (true) {
             try {
                 String input = getValidInput(MAIN_MENU_PROMPT, Regex.MainOption);
@@ -24,9 +36,10 @@ public class Application {
                 System.out.println(e.getMessage());
             }
         }
+        setConnection(null);
     }
 
-    private static void handle(String choice) {
+    private void handle(String choice) {
         switch (choice) {
             case "1":
                 while (true) {
@@ -57,19 +70,30 @@ public class Application {
         }
     }
 
-    public static void init(String initInfo) {
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public void init(String initInfo) {
+        Matcher matcher = Regex.InitRegex.getMatcher(initInfo).get();
+        int countA = Integer.parseInt(matcher.group("countA"));
+        int countB = Integer.parseInt(matcher.group("countB"));
+        List<ParkingStatus> initPlaces = new ArrayList<>();
+        IntStream.rangeClosed(1, countA)
+                .mapToObj(n -> new ParkingStatus("A", n, null))
+                .forEach(initPlaces::add);
+        IntStream.rangeClosed(1, countB)
+                .mapToObj(n -> new ParkingStatus("B", n, null))
+                .forEach(initPlaces::add);
 
     }
 
-    public static String park(String carNumber) {
+    public String park(String carNumber) {
         return "";
     }
 
-    public static String fetch(String ticket) {
+    public String fetch(String ticket) {
         return "";
     }
 
-    private static String getValidInput(String prompt, Regex regex) throws InvalidInput {
+    private String getValidInput(String prompt, Regex regex) throws InvalidInput {
         System.out.println(prompt);
         String input = SC.next();
         regex.validate(input);
