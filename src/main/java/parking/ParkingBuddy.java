@@ -13,7 +13,7 @@ public class ParkingBuddy {
     }
 
     public ParkingStatus parkCar(String carPlate) throws SQLException {
-        ParkingStatus nextPlace = statusRepo.customQueryFirst("plate_no IS NULL").orElseThrow(ParkingLotFullException::new);
+        ParkingStatus nextPlace = statusRepo.customQueryFirst("WHERE plate_no IS NULL").orElseThrow(ParkingLotFullException::new);
         nextPlace.setPlateNo(carPlate);
         try {
             statusRepo.updateByEntity(nextPlace);

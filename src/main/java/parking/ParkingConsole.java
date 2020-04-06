@@ -85,8 +85,9 @@ public class ParkingConsole {
         MANAGER.initParkingPlaces(initPlaces);
     }
 
-    public String park(String carNumber) {
-        return "";
+    public String park(String carNumber) throws SQLException {
+        ParkingStatus ticket = MANAGER.parkCar(carNumber);
+        return String.format("%s,%d,%s",ticket.getRegion(),ticket.getSerial(),ticket.getPlateNo());
     }
 
     public String fetch(String ticket) {
