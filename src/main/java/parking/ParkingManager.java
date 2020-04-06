@@ -22,7 +22,7 @@ public class ParkingManager implements AutoCloseable {
         statusRepo.init(initPlaces);
     }
 
-    public ParkingStatus parkCar(int plateNo) throws SQLException {
+    public ParkingStatus parkCar(String plateNo) throws SQLException {
         return buddy.parkCar(plateNo);
     }
 
