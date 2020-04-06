@@ -31,15 +31,15 @@ public class ParkingStatus {
         return plateNo;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setRegion(Object region) {
+        this.region = (String) region;
     }
 
-    public void setSerial(int serial) {
-        this.serial = serial;
+    public void setSerial(Object serial) {
+        this.serial = (Integer) serial;
     }
 
-    public void setPlateNo(String plateNo) {
-        this.plateNo = plateNo;
+    public void setPlateNo(Object plateNo) {
+        this.plateNo = (String) plateNo;
     }
 }
