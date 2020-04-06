@@ -1,9 +1,6 @@
 import org.junit.jupiter.api.BeforeAll;
-import parking.ParkingConsole;
-import parking.InvalidTicketException;
-import parking.ParkingLotFullException;
+import parking.*;
 import org.junit.jupiter.api.Test;
-import parking.ParkingStatus;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -66,7 +63,7 @@ class ParkingConsoleTest {
 
         assertThrows(InvalidTicketException.class, () -> console.fetch("C,1,A12098"));
         assertThrows(InvalidTicketException.class, () -> console.fetch("A,9,A12098"), "停车券无效");
-        assertThrows(InvalidTicketException.class, () -> console.fetch("B,-1,A12098"), "停车券无效");
+        assertThrows(InvalidInput.class, () -> console.fetch("B,-1,A12098"), "输入错误！ -> 不合法的停车券\n");
     }
 
     @Test
