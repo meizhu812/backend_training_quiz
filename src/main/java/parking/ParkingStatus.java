@@ -7,7 +7,6 @@ public class ParkingStatus {
     private String region;
     @Key
     private int serial;
-    @Key
     private String plateNo;
 
     public ParkingStatus() {
