@@ -27,26 +27,21 @@ public abstract class BaseRepository<E> implements AutoCloseable {
         this.connection = connection;
     }
 
-    public final void init(List<E> entities) throws SQLException {
-        try {
-            deleteAll();
-            saveAll(entities);
-        } catch (ZeroAffected ignored) {
-        }
+    public final void init(List<E> entities) throws SQLException, ZeroAffected {
+        deleteAll();
+        saveAll(entities);
     }
 
-    public final int saveAll(List<E> entities) throws SQLException, ZeroAffected {
-        int count = 0;
+    public final void saveAll(List<E> entities) throws SQLException {
         for (E entity : entities) {
-            count += save(entity);
+            save(entity);
         }
-        return count;
     }
 
-    public final int save(E entity) throws SQLException, ZeroAffected {
+    public final void save(E entity) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.insert())) {
             entityUtil.setInsertValues(statement, entity);
-            return validateAffected(statement.executeUpdate());
+            statement.executeUpdate();
         }
     }
 
@@ -83,30 +78,28 @@ public abstract class BaseRepository<E> implements AutoCloseable {
         }
     }
 
-    public final int updateByEntity(E newEntity) throws SQLException, ZeroAffected {
+    public final void updateByEntity(E newEntity) throws SQLException, ZeroAffected {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.updateByEntity())) {
             entityUtil.setUpdateValues(statement, newEntity);
-            return validateAffected(statement.executeUpdate());
+            validateAffected(statement.executeUpdate());
         }
     }
 
-    public final int deleteAll() throws SQLException {
+    public final void deleteAll() throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.deleteAll())) {
-            return statement.executeUpdate();
+            statement.executeUpdate();
         }
     }
 
-    public final int deleteByKeys(Object... keys) throws SQLException, ZeroAffected {
+    public final void deleteByKeys(Object... keys) throws SQLException, ZeroAffected {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.deleteByKeys())) {
-            return validateAffected(statement.executeUpdate());
+            validateAffected(statement.executeUpdate());
         }
     }
 
-    private int validateAffected(int result) throws ZeroAffected {
+    private void validateAffected(int result) throws ZeroAffected {
         if (result == 0) {
             throw new ZeroAffected();
-        } else {
-            return result;
         }
     }
 }
