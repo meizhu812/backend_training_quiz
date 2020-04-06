@@ -17,7 +17,8 @@ public class EntityUtil<E> {
         entityFields = EntityInspector.getEntityFields(entityClass);
     }
 
-    public void setValues(PreparedStatement statement, E entity, List<Method> getters) throws SQLException {
+    public void setValues(PreparedStatement statement, E entity, List<Method> getters, int offset) throws SQLException {
+
         for (int i = 0; i < getters.size(); i++) {
             Object data = null;
             try {
@@ -25,8 +26,12 @@ public class EntityUtil<E> {
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-            statement.setObject(i + 1, data);
+            statement.setObject(i + offset + 1, data);
         }
+    }
+
+    public void setValues(PreparedStatement statement, E entity, List<Method> getters) throws SQLException {
+        setValues(statement, entity, getters, 0);
     }
 
     public void setInsertValues(PreparedStatement statement, E entity) throws SQLException {
@@ -37,9 +42,23 @@ public class EntityUtil<E> {
     public void setUpdateValues(PreparedStatement statement, E entity) throws SQLException {
         List<Method> updateGetters = entityFields.stream()
                 .sorted((f1, f2) -> Boolean.compare(f1.isKey(), f2.isKey()))
-                .map(EntityField::getGetter).collect(Collectors.toList());
+                .map(EntityField::getGetter)
+                .collect(Collectors.toList());
         setValues(statement, entity, updateGetters);
     }
+
+    public void setReplaceValues(PreparedStatement statement, E oldEntity, E newEntity) throws SQLException {
+        List<Method> newGetters = entityFields.stream()
+                .filter(field -> !field.isKey())
+                .map(EntityField::getGetter)
+                .collect(Collectors.toList());
+        List<Method> oldGetters = entityFields.stream()
+                .map(EntityField::getGetter)
+                .collect(Collectors.toList());
+        setValues(statement, newEntity, newGetters);
+        setValues(statement, oldEntity, oldGetters, newGetters.size());
+    }
+
 
     public void setWhereValues(PreparedStatement statement, Object... values) throws SQLException {
         for (int i = 0; i < values.length; i++) {

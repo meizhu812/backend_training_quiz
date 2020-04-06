@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+@SuppressWarnings("unused")
 public abstract class BaseRepository<E> implements AutoCloseable {
     protected final EntityUtil<E> entityUtil;
     protected final SqlUtil<E> sqlUtil;
@@ -27,7 +28,7 @@ public abstract class BaseRepository<E> implements AutoCloseable {
         this.connection = connection;
     }
 
-    public final void init(List<E> entities) throws SQLException, ZeroAffected {
+    public final void init(List<E> entities) throws SQLException {
         deleteAll();
         saveAll(entities);
     }
@@ -81,6 +82,13 @@ public abstract class BaseRepository<E> implements AutoCloseable {
     public final void updateByEntity(E newEntity) throws SQLException, ZeroAffected {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.updateByEntity())) {
             entityUtil.setUpdateValues(statement, newEntity);
+            validateAffected(statement.executeUpdate());
+        }
+    }
+
+    public final void replaceByEntity(E oldEntity, E newEntity) throws SQLException, ZeroAffected {
+        try (PreparedStatement statement = connection.prepareStatement(sqlUtil.replaceByEntity())) {
+            entityUtil.setReplaceValues(statement, oldEntity, newEntity);
             validateAffected(statement.executeUpdate());
         }
     }

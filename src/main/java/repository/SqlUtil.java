@@ -29,14 +29,21 @@ public class SqlUtil<E> {
     String queryByKeys() {
         return String.format("%s WHERE %s",
                 queryAll(),
-                getWhereColumns());
+                getWhereKeyColumns());
     }
 
     String updateByEntity() {
         return String.format("UPDATE %s SET %s WHERE %s",
                 tableName,
                 getSetColumns(),
-                getWhereColumns());
+                getWhereKeyColumns());
+    }
+
+    String replaceByEntity() {
+        return String.format("UPDATE %s SET %s WHERE %s",
+                tableName,
+                getSetColumns(),
+                getWhereAllColumns());
     }
 
     String deleteAll() {
@@ -46,7 +53,7 @@ public class SqlUtil<E> {
     String deleteByKeys() {
         return String.format("%s WHERE %s",
                 deleteAll(),
-                getWhereColumns());
+                getWhereKeyColumns());
     }
 
     protected String getJoinedColumns() {
@@ -67,7 +74,7 @@ public class SqlUtil<E> {
                 .collect(Collectors.joining(", "));
     }
 
-    public String getWhereColumns() {
+    public String getWhereKeyColumns() {
         return tableColumns.stream()
                 .filter(TableColumn::isKey)
                 .map(TableColumn::getColumnName)
@@ -75,6 +82,11 @@ public class SqlUtil<E> {
                 .collect(Collectors.joining(" AND "));
     }
 
-
+    public String getWhereAllColumns() {
+        return tableColumns.stream()
+                .map(TableColumn::getColumnName)
+                .map(col -> col + "=?")
+                .collect(Collectors.joining(" AND "));
+    }
 }
 
