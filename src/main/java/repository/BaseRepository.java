@@ -107,7 +107,7 @@ public abstract class BaseRepository<E> implements AutoCloseable {
         }
     }
 
-    public final void deleteByKeys(Object... keys) throws SQLException, ZeroAffected {
+    public final void deleteByKeys(Object... keys) throws SQLException{
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.deleteByKeys())) {
             statement.executeUpdate();
         }

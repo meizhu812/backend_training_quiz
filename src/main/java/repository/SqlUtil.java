@@ -29,27 +29,27 @@ public class SqlUtil<E> {
     String queryByKeys() {
         return String.format("%s WHERE %s",
                 queryAll(),
-                getWhereKeyColumns());
+                getKeyWheres());
     }
 
     String update() {
         return String.format("UPDATE %s SET %s",
                 tableName,
-                getSetAllColumns());
+                getAllSets());
     }
 
     String updateByEntity() {
         return String.format("UPDATE %s SET %s WHERE %s",
                 tableName,
-                getSetValuesColumns(),
-                getWhereKeyColumns());
+                getValuesSets(),
+                getKeyWheres());
     }
 
     String replaceByEntity() {
         return String.format("UPDATE %s SET %s WHERE %s",
                 tableName,
-                getSetValuesColumns(),
-                getWhereAllColumns());
+                getValuesSets(),
+                getAllWheres());
     }
 
     String deleteAll() {
@@ -59,7 +59,7 @@ public class SqlUtil<E> {
     String deleteByKeys() {
         return String.format("%s WHERE %s",
                 deleteAll(),
-                getWhereKeyColumns());
+                getKeyWheres());
     }
 
     protected String getJoinedColumns() {
@@ -72,7 +72,7 @@ public class SqlUtil<E> {
         return String.join(", ", Collections.nCopies(tableColumns.size(), "?"));
     }
 
-    public String getSetValuesColumns() {
+    public String getValuesSets() {
         return tableColumns.stream()
                 .filter(column -> !column.isKey())
                 .map(TableColumn::getColumnName)
@@ -80,14 +80,14 @@ public class SqlUtil<E> {
                 .collect(Collectors.joining(", "));
     }
 
-    public String getSetAllColumns() {
+    public String getAllSets() {
         return tableColumns.stream()
                 .map(TableColumn::getColumnName)
                 .map(col -> col + "=?")
                 .collect(Collectors.joining(", "));
     }
 
-    public String getWhereKeyColumns() {
+    public String getKeyWheres() {
         return tableColumns.stream()
                 .filter(TableColumn::isKey)
                 .map(TableColumn::getColumnName)
@@ -95,11 +95,10 @@ public class SqlUtil<E> {
                 .collect(Collectors.joining(" AND "));
     }
 
-    public String getWhereAllColumns() {
+    public String getAllWheres() {
         return tableColumns.stream()
                 .map(TableColumn::getColumnName)
                 .map(col -> col + "=?")
                 .collect(Collectors.joining(" AND "));
     }
 }
-

@@ -12,12 +12,17 @@ public final class EntityInspector {
     }
 
     static List<EntityField> getEntityFields(Class<?> entityClass) {
+        boolean hasKey = false;
         List<EntityField> entityFields = new ArrayList<>();
         for (Field field : entityClass.getDeclaredFields()) {
             boolean isKey = Optional.ofNullable(field.getAnnotation(Key.class)).isPresent();
+            hasKey = isKey || hasKey;
             Method getter = getGetter(field, entityClass);
             Method setter = getSetter(field, entityClass);
             entityFields.add(new EntityField(isKey, getter, setter));
+        }
+        if (!hasKey) {
+            throw new RuntimeException("Missing key field/column");
         }
         return entityFields;
     }
