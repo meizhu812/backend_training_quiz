@@ -12,7 +12,7 @@ public enum Regex {
     //language=RegExp
     PlateNo("[A-Z][0-9]{5}", "车牌号"),
     //language=RegExp
-    Ticket("(?<region>[AB]),(?<serial>\\d{1,2}),(?<plate>[A-Z][0-9]{5})","停车票");
+    Ticket("(?<region>[AB]),(?<serial>\\d{1,2}),(?<plate>[A-Z][0-9]{5})","停车券");
 
     public String getName() {
         return name;
