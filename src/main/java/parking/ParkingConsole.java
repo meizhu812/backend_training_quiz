@@ -17,6 +17,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class ParkingConsole implements AutoCloseable {
+    private static final String TOP_PROMPT
+            = "【提示，可以输入EXIT退出程序或CANCEL中止当前操作】";
     private static final String MAIN_MENU_PROMPT
             = "1. 初始化停车场数据\n"
             + "2. 停车\n"
@@ -32,6 +34,7 @@ public class ParkingConsole implements AutoCloseable {
     private static final String FETCH_PROMPT
             = "请输入停车券信息\n"
             + "格式为“停车场编号1，车位编号，车牌号”，如“A,1,A12098”：";
+
     private final Iterator<String> in;
     private final ParkingManager manager = new ParkingManager();
 
@@ -47,8 +50,8 @@ public class ParkingConsole implements AutoCloseable {
         manager.setConnection(connection);
     }
 
-    @SuppressWarnings("InfiniteLoopStatement")
     public void operateParking() throws SQLException {
+        System.out.println(TOP_PROMPT);
         while (true) {
             try {
                 System.out.println(MAIN_MENU_PROMPT);
@@ -61,6 +64,7 @@ public class ParkingConsole implements AutoCloseable {
                 System.out.println("操作中断！");
             } catch (ExitEvent e) {
                 exit();
+                break;
             }
         }
     }
@@ -78,6 +82,7 @@ public class ParkingConsole implements AutoCloseable {
                         System.out.println(e.getMessage());
                     }
                 }
+                break;
             case "2": {
                 try {
                     System.out.println(PARK_PROMPT);
