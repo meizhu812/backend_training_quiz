@@ -1,9 +1,11 @@
 package parking;
 
-import java.util.Optional;
+import parking.exceptions.InvalidInput;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public enum Regex {
     //language=RegExp
     MainOption("[1234]", "选项"),
@@ -12,7 +14,7 @@ public enum Regex {
     //language=RegExp
     PlateNo("[A-Z][0-9]{5}", "车牌号"),
     //language=RegExp
-    Ticket("(?<region>[AB]),(?<serial>\\d{1,2}),(?<plate>[A-Z][0-9]{5})","停车券");
+    Ticket("(?<region>[AB]),(?<serial>\\d{1,2}),(?<plate>[A-Z][0-9]{5})", "停车券");
 
     public String getName() {
         return name;

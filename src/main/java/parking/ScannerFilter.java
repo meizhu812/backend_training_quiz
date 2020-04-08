@@ -1,5 +1,8 @@
 package parking;
 
+import parking.exceptions.ExitEvent;
+import parking.exceptions.CancelEvent;
+
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -24,7 +27,7 @@ public class ScannerFilter implements Iterator<String> {
             case "EXIT":
                 throw new ExitEvent();
             case "CANCEL":
-                throw new InterruptionEvent();
+                throw new CancelEvent();
             default:
                 return input;
         }
@@ -38,7 +41,6 @@ public class ScannerFilter implements Iterator<String> {
     @Override
     public void remove() {
         sc.remove();
-
     }
 
     @Override

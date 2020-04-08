@@ -1,4 +1,4 @@
-package parking;
+package parking.exceptions;
 
 public class InvalidInput extends Exception {
     public InvalidInput(String name) {

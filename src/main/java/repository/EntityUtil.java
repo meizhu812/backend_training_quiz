@@ -34,7 +34,7 @@ public class EntityUtil<E> {
         setValues(statement, entity, getters, 0);
     }
 
-    public void setInsertValues(PreparedStatement statement, E entity) throws SQLException {
+    public void setAllValues(PreparedStatement statement, E entity) throws SQLException {
         List<Method> insertGetters = entityFields.stream().map(EntityField::getGetter).collect(Collectors.toList());
         setValues(statement, entity, insertGetters);
     }

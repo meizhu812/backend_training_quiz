@@ -5,34 +5,31 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ParkingManager implements AutoCloseable {
-    private Connection connection;
-    private ParkingStatusRepo statusRepo = new ParkingStatusRepo();
-    private ParkingBuddy buddy;
+    private ParkingSpaceRepo statusRepo = new ParkingSpaceRepo();
+    private ParkingAssistant buddy;
 
     public ParkingManager() {
     }
 
     public void setConnection(Connection connection) {
-        this.connection = connection;
         statusRepo.setConnection(connection);
-        buddy = new ParkingBuddy(statusRepo);
+        buddy = new ParkingAssistant(statusRepo);
     }
 
-    public void initParkingPlaces(List<ParkingStatus> initPlaces) throws SQLException {
+    public void initParkingPlaces(List<ParkingSpace> initPlaces) throws SQLException {
         statusRepo.init(initPlaces);
     }
 
-    public ParkingStatus parkCar(String plateNo) throws SQLException {
+    public ParkingSpace parkCar(String plateNo) throws SQLException {
         return buddy.parkCar(plateNo);
     }
 
-    public String fetchCar(ParkingStatus ticket) throws SQLException {
+    public String fetchCar(ParkingSpace ticket) throws SQLException {
         return buddy.fetchCar(ticket);
     }
 
     @Override
     public void close() {
-        connection = null;
         statusRepo.close();
     }
 }

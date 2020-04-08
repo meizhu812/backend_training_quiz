@@ -1,6 +1,9 @@
 import org.junit.jupiter.api.BeforeAll;
 import parking.*;
 import org.junit.jupiter.api.Test;
+import parking.exceptions.InvalidInput;
+import parking.exceptions.InvalidTicketException;
+import parking.exceptions.ParkingLotFullException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

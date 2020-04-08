@@ -32,17 +32,23 @@ public class SqlUtil<E> {
                 getWhereKeyColumns());
     }
 
+    String update() {
+        return String.format("UPDATE %s SET %s",
+                tableName,
+                getSetAllColumns());
+    }
+
     String updateByEntity() {
         return String.format("UPDATE %s SET %s WHERE %s",
                 tableName,
-                getSetColumns(),
+                getSetValuesColumns(),
                 getWhereKeyColumns());
     }
 
     String replaceByEntity() {
         return String.format("UPDATE %s SET %s WHERE %s",
                 tableName,
-                getSetColumns(),
+                getSetValuesColumns(),
                 getWhereAllColumns());
     }
 
@@ -66,9 +72,16 @@ public class SqlUtil<E> {
         return String.join(", ", Collections.nCopies(tableColumns.size(), "?"));
     }
 
-    public String getSetColumns() {
+    public String getSetValuesColumns() {
         return tableColumns.stream()
                 .filter(column -> !column.isKey())
+                .map(TableColumn::getColumnName)
+                .map(col -> col + "=?")
+                .collect(Collectors.joining(", "));
+    }
+
+    public String getSetAllColumns() {
+        return tableColumns.stream()
                 .map(TableColumn::getColumnName)
                 .map(col -> col + "=?")
                 .collect(Collectors.joining(", "));

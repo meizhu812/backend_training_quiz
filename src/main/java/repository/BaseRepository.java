@@ -41,7 +41,7 @@ public abstract class BaseRepository<E> implements AutoCloseable {
 
     public final void save(E entity) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.insert())) {
-            entityUtil.setInsertValues(statement, entity);
+            entityUtil.setAllValues(statement, entity);
             statement.executeUpdate();
         }
     }
@@ -63,7 +63,7 @@ public abstract class BaseRepository<E> implements AutoCloseable {
         }
     }
 
-    public final List<E> customQuery(String condition) throws SQLException {
+    public final List<E> query(String condition) throws SQLException {
         String sql = String.format("%s %s", sqlUtil.queryAll(), condition);
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
@@ -71,7 +71,7 @@ public abstract class BaseRepository<E> implements AutoCloseable {
         }
     }
 
-    public final Optional<E> customQueryFirst(String condition) throws SQLException {
+    public final Optional<E> queryFirst(String condition) throws SQLException {
         String sql = String.format("%s %s LIMIT 1", sqlUtil.queryAll(), condition);
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
@@ -79,17 +79,25 @@ public abstract class BaseRepository<E> implements AutoCloseable {
         }
     }
 
-    public final void updateByEntity(E newEntity) throws SQLException, ZeroAffected {
+    public final void updateByEntity(E newEntity) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.updateByEntity())) {
             entityUtil.setUpdateValues(statement, newEntity);
-            validateAffected(statement.executeUpdate());
+            statement.executeUpdate();
         }
     }
 
-    public final void replaceByEntity(E oldEntity, E newEntity) throws SQLException, ZeroAffected {
+    public final int replaceByEntity(E oldEntity, E newEntity) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.replaceByEntity())) {
             entityUtil.setReplaceValues(statement, oldEntity, newEntity);
-            validateAffected(statement.executeUpdate());
+            return statement.executeUpdate();
+        }
+    }
+
+    public final void update(E newEntity, String condition) throws SQLException {
+        String sql = String.format("%s %s", sqlUtil.update(), condition);
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            entityUtil.setAllValues(statement, newEntity);
+            statement.executeUpdate();
         }
     }
 
@@ -101,13 +109,7 @@ public abstract class BaseRepository<E> implements AutoCloseable {
 
     public final void deleteByKeys(Object... keys) throws SQLException, ZeroAffected {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.deleteByKeys())) {
-            validateAffected(statement.executeUpdate());
-        }
-    }
-
-    private void validateAffected(int result) throws ZeroAffected {
-        if (result == 0) {
-            throw new ZeroAffected();
+            statement.executeUpdate();
         }
     }
 }

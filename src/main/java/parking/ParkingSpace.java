@@ -2,20 +2,20 @@ package parking;
 
 import repository.Key;
 
-public class ParkingStatus {
+public class ParkingSpace {
     @Key
     private String region;
     @Key
     private int serial;
-    private String plateNo;
+    private String carNumber;
 
-    public ParkingStatus() {
+    public ParkingSpace() {
     }
 
-    public ParkingStatus(String region, int serial, String plateNo) {
+    public ParkingSpace(String region, int serial, String carNumber) {
         this.region = region;
         this.serial = serial;
-        this.plateNo = plateNo;
+        this.carNumber = carNumber;
     }
 
     public String getRegion() {
@@ -26,8 +26,8 @@ public class ParkingStatus {
         return serial;
     }
 
-    public String getPlateNo() {
-        return plateNo;
+    public String getCarNumber() {
+        return carNumber;
     }
 
     public void setRegion(Object region) {
@@ -38,7 +38,7 @@ public class ParkingStatus {
         this.serial = (Integer) serial;
     }
 
-    public void setPlateNo(Object plateNo) {
-        this.plateNo = (String) plateNo;
+    public void setCarNumber(Object carNumber) {
+        this.carNumber = (String) carNumber;
     }
 }
