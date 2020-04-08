@@ -17,29 +17,14 @@ public class EntityUtil<E> {
         entityFields = EntityInspector.getEntityFields(entityClass);
     }
 
-    public void setValues(PreparedStatement statement, E entity, List<Method> getters, int offset) throws SQLException {
-
-        for (int i = 0; i < getters.size(); i++) {
-            Object data = null;
-            try {
-                data = getters.get(i).invoke(entity);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            statement.setObject(i + offset + 1, data);
-        }
+    public void setAll(PreparedStatement statement, E entity) throws SQLException {
+        List<Method> allGetters = entityFields.stream()
+                .map(EntityField::getGetter)
+                .collect(Collectors.toList());
+        setValues(statement, entity, allGetters);
     }
 
-    public void setValues(PreparedStatement statement, E entity, List<Method> getters) throws SQLException {
-        setValues(statement, entity, getters, 0);
-    }
-
-    public void setAllValues(PreparedStatement statement, E entity) throws SQLException {
-        List<Method> insertGetters = entityFields.stream().map(EntityField::getGetter).collect(Collectors.toList());
-        setValues(statement, entity, insertGetters);
-    }
-
-    public void setUpdateValues(PreparedStatement statement, E entity) throws SQLException {
+    public void setUpdateByE(PreparedStatement statement, E entity) throws SQLException {
         List<Method> updateGetters = entityFields.stream()
                 .sorted((f1, f2) -> Boolean.compare(f1.isKey(), f2.isKey()))
                 .map(EntityField::getGetter)
@@ -47,7 +32,7 @@ public class EntityUtil<E> {
         setValues(statement, entity, updateGetters);
     }
 
-    public void setReplaceValues(PreparedStatement statement, E oldEntity, E newEntity) throws SQLException {
+    public void setReplaceByE(PreparedStatement statement, E oldEntity, E newEntity) throws SQLException {
         List<Method> newGetters = entityFields.stream()
                 .filter(field -> !field.isKey())
                 .map(EntityField::getGetter)
@@ -59,10 +44,24 @@ public class EntityUtil<E> {
         setValues(statement, oldEntity, oldGetters, newGetters.size());
     }
 
-
-    public void setWhereValues(PreparedStatement statement, Object... values) throws SQLException {
+    public void setKeyWheres(PreparedStatement statement, Object... values) throws SQLException {
         for (int i = 0; i < values.length; i++) {
             statement.setObject(i + 1, values[i]);
+        }
+    }
+
+    private void setValues(PreparedStatement statement, E entity, List<Method> getters) throws SQLException {
+        setValues(statement, entity, getters, 0);
+    }
+
+    private void setValues(PreparedStatement statement, E entity, List<Method> getters, int offset) throws SQLException {
+        for (int i = 0; i < getters.size(); i++) {
+            try {
+                Object data = getters.get(i).invoke(entity);
+                statement.setObject(i + offset + 1, data);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -80,7 +79,7 @@ public class EntityUtil<E> {
             try {
                 entityFields.get(i).getSetter().invoke(entity, resultSet.getObject(i + 1));
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
         return entity;
@@ -90,8 +89,7 @@ public class EntityUtil<E> {
         try {
             return entityClass.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }

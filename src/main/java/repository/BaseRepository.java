@@ -41,7 +41,7 @@ public abstract class BaseRepository<E> implements AutoCloseable {
 
     public final void save(E entity) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.insert())) {
-            entityUtil.setAllValues(statement, entity);
+            entityUtil.setAll(statement, entity);
             statement.executeUpdate();
         }
     }
@@ -56,7 +56,7 @@ public abstract class BaseRepository<E> implements AutoCloseable {
 
     public final Optional<E> queryByKeys(Object... keys) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.queryByKeys())) {
-            entityUtil.setWhereValues(statement, keys);
+            entityUtil.setKeyWheres(statement, keys);
             try (ResultSet resultSet = statement.executeQuery()) {
                 return entityUtil.makeEntities(resultSet).stream().findFirst();
             }
@@ -81,14 +81,14 @@ public abstract class BaseRepository<E> implements AutoCloseable {
 
     public final void updateByEntity(E newEntity) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.updateByEntity())) {
-            entityUtil.setUpdateValues(statement, newEntity);
+            entityUtil.setUpdateByE(statement, newEntity);
             statement.executeUpdate();
         }
     }
 
     public final int replaceByEntity(E oldEntity, E newEntity) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlUtil.replaceByEntity())) {
-            entityUtil.setReplaceValues(statement, oldEntity, newEntity);
+            entityUtil.setReplaceByE(statement, oldEntity, newEntity);
             return statement.executeUpdate();
         }
     }
@@ -96,7 +96,7 @@ public abstract class BaseRepository<E> implements AutoCloseable {
     public final void update(E newEntity, String condition) throws SQLException {
         String sql = String.format("%s %s", sqlUtil.update(), condition);
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            entityUtil.setAllValues(statement, newEntity);
+            entityUtil.setAll(statement, newEntity);
             statement.executeUpdate();
         }
     }
