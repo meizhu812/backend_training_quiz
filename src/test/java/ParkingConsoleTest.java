@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import parking.*;
 import org.junit.jupiter.api.Test;
@@ -5,22 +6,32 @@ import parking.exceptions.InvalidInput;
 import parking.exceptions.InvalidTicketException;
 import parking.exceptions.ParkingLotFullException;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ParkingConsoleTest {
     private static final ParkingConsole console = new ParkingConsole();
+    private static Connection connection;
 
     @BeforeAll
-    static void beforeAll() throws SQLException {
-        Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/parking_lot?serverTimezone=UTC",
-                "root", "root");
+    static void beforeAll() throws SQLException, IOException {
+        Properties properties = new Properties();
+        properties.load(App.class.getResourceAsStream("jdbc.properties"));
+        connection = DriverManager.getConnection(
+                properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
         console.setConnection(connection);
+    }
+
+    @AfterAll
+    static void afterAll() throws SQLException {
+        console.close();
+        connection.close();
     }
 
     @Test
