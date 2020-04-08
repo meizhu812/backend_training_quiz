@@ -34,6 +34,10 @@ public class ParkingConsole {
                 handle(input);
             } catch (InvalidInput e) {
                 System.out.println(e.getMessage());
+            } catch (InterruptionEvent e) {
+                System.out.println("操作中断！");
+            } catch (ExitEvent e) {
+                exit();
             }
         }
     }
@@ -63,12 +67,12 @@ public class ParkingConsole {
                 break;
             }
             case "4": {
-                System.out.println("系统已退出");
-                setConnection(null);
+                exit();
                 break;
             }
         }
     }
+
 
     public void init(String initInfo) throws SQLException, InvalidInput {
         Matcher matcher = Regex.InitRegex.getMatcher(initInfo);
@@ -93,6 +97,11 @@ public class ParkingConsole {
                 Integer.parseInt(matcher.group("serial")),
                 matcher.group("plate"));
         return manager.fetchCar(parkingTicket);
+    }
+
+    private void exit() {
+        System.out.println("系统已退出");
+        setConnection(null);
     }
 
     private String getValidInput(String prompt, Regex regex) throws InvalidInput {

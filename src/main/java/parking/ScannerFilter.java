@@ -7,6 +7,10 @@ import java.util.function.Consumer;
 public class ScannerFilter implements Iterator<String> {
     private final Scanner sc;
 
+    public ScannerFilter() {
+        this(new Scanner(System.in));
+    }
+
     public ScannerFilter(Scanner scanner) {
         sc = scanner;
     }
