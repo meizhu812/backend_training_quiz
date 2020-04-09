@@ -2,6 +2,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import parking.*;
 import org.junit.jupiter.api.Test;
+import parking.exceptions.CarAlreadyInside;
 import parking.exceptions.InvalidInput;
 import parking.exceptions.InvalidTicketException;
 import parking.exceptions.ParkingLotFullException;
@@ -52,6 +53,13 @@ class ParkingConsoleTest {
         console.park("A12908");
         console.park("B38201");
         assertThrows(ParkingLotFullException.class, () -> console.park("H12626"));
+    }
+
+    @Test
+    void should_throw_exception_with_message_that_when_parking_a_car_that_is_already_inside() throws SQLException, InvalidInput {
+        console.init("A:2,B:2");
+        console.park("A12345");
+        assertEquals(assertThrows(CarAlreadyInside.class,()->console.park("A12345")).getMessage(),"错误：车牌号为A12345的车辆已入场");
     }
 
     @Test
