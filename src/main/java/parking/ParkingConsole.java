@@ -101,11 +101,10 @@ public class ParkingConsole implements AutoCloseable {
                     System.out.println(FETCH_PROMPT);
                     String car = fetch(in.next());
                     System.out.printf("已为您取到车牌号为%s的车辆，很高兴为您服务，祝您生活愉快!\n", car);
-                    break;
                 } catch (InvalidTicket e) {
                     System.out.println(e.getMessage());
-                    break;
                 }
+                break;
             }
             case "4": {
                 throw new ExitEvent();

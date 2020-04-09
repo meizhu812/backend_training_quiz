@@ -39,7 +39,8 @@ class ParkingAssistant {
     String fetchCarOld(ParkingSpace ticket) throws SQLException, InvalidTicket {
         ParkingSpace parkedCar = spaceRepo.queryByKeys(ticket.getRegion(), ticket.getSerial())
                 .orElseThrow(() -> new InvalidTicket("没有这个车位"));
-        String plateNo = Optional.ofNullable(parkedCar.getCarNumber()).orElseThrow(() -> new InvalidTicket("该车位未停放车辆"));
+        String plateNo = Optional.ofNullable(parkedCar.getCarNumber())
+                .orElseThrow(() -> new InvalidTicket("该车位未停放车辆"));
         if (!plateNo.equals(ticket.getCarNumber())) {
             throw new InvalidTicket("车牌号不匹配");
         }
