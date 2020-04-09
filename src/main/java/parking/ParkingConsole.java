@@ -86,7 +86,7 @@ public class ParkingConsole implements AutoCloseable {
                     String[] ticketDetails = ticket.split(",");
                     System.out.printf("已将您的车牌号为%s的车辆停到%s停车场%s号车位，停车券为：%s，请您妥善保存。\n",
                             ticketDetails[2], ticketDetails[0], ticketDetails[1], ticket);
-                } catch (ParkingLotFullException | CarAlreadyInside e) {
+                } catch (ParkingLotFull | CarAlreadyInside e) {
                     System.out.println(e.getMessage());
                 }
                 break;
@@ -97,7 +97,7 @@ public class ParkingConsole implements AutoCloseable {
                     String car = fetch(in.next());
                     System.out.printf("已为您取到车牌号为%s的车辆，很高兴为您服务，祝您生活愉快!\n", car);
                     break;
-                } catch (InvalidTicketException e) {
+                } catch (InvalidTicket e) {
                     System.out.println(e.getMessage());
                     break;
                 }
@@ -120,13 +120,13 @@ public class ParkingConsole implements AutoCloseable {
         manager.initParkingPlaces(initPlaces);
     }
 
-    public String park(String carNumber) throws SQLException, InvalidInput {
+    public String park(String carNumber) throws SQLException, InvalidInput, ParkingLotFull {
         Regex.PlateNo.validate(carNumber);
         ParkingSpace space = manager.parkCar(carNumber);
         return String.format("%s,%d,%s", space.getRegion(), space.getSerial(), space.getCarNumber());
     }
 
-    public String fetch(String ticketString) throws SQLException, InvalidTicketException {
+    public String fetch(String ticketString) throws SQLException, InvalidTicket {
         try {
             Matcher matcher = Regex.Ticket.getMatcher(ticketString);
             ParkingSpace ticketSpace = new ParkingSpace(
@@ -135,12 +135,12 @@ public class ParkingConsole implements AutoCloseable {
                     matcher.group("plate"));
             return manager.fetchCar(ticketSpace);
         } catch (InvalidInput invalidInput) {
-            throw new InvalidTicketException("停车券格式错误");
+            throw new InvalidTicket("停车券格式错误");
         }
     }
 
     @Deprecated
-    public String fetchOld(String ticketString) throws SQLException, InvalidTicketException {
+    public String fetchOld(String ticketString) throws SQLException, InvalidTicket {
         try {
             Matcher matcher = Regex.Ticket.getMatcher(ticketString);
             ParkingSpace ticketSpace = new ParkingSpace(
@@ -149,7 +149,7 @@ public class ParkingConsole implements AutoCloseable {
                     matcher.group("plate"));
             return manager.fetchCarOld(ticketSpace);
         } catch (InvalidInput invalidInput) {
-            throw new InvalidTicketException("停车券格式错误");
+            throw new InvalidTicket("停车券格式错误");
         }
     }
 

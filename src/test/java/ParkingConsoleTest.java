@@ -4,8 +4,8 @@ import parking.*;
 import org.junit.jupiter.api.Test;
 import parking.exceptions.CarAlreadyInside;
 import parking.exceptions.InvalidInput;
-import parking.exceptions.InvalidTicketException;
-import parking.exceptions.ParkingLotFullException;
+import parking.exceptions.InvalidTicket;
+import parking.exceptions.ParkingLotFull;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -51,7 +51,7 @@ class ParkingConsoleTest {
         console.init("A:1,B:1");
         console.park("A12908");
         console.park("B38201");
-        assertThrows(ParkingLotFullException.class, () -> console.park("H12626"));
+        assertThrows(ParkingLotFull.class, () -> console.park("H12626"));
     }
 
     @Test
@@ -62,7 +62,7 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_return_car_information_when_fetch_given_ticket_and_car() throws SQLException, InvalidInput, InvalidTicketException {
+    void should_return_car_information_when_fetch_given_ticket_and_car() throws SQLException, InvalidInput, InvalidTicket {
         console.init("A:8,B:10");
 
         String aTicket = console.park("A12198");
@@ -82,9 +82,9 @@ class ParkingConsoleTest {
     void should_throw_exception_with_message_when_fetch_given_ticket_information_is_not_correct() throws SQLException, InvalidInput {
         console.init("A:8,B:10");
 
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch("C,1,A12098")).getMessage(), "停车券格式错误");
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch("A,9,A12098")).getMessage(), "停车券无效");
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch("B,-1,A12098")).getMessage(), "停车券格式错误");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetch("C,1,A12098")).getMessage(), "停车券格式错误");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetch("A,9,A12098")).getMessage(), "停车券无效");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetch("B,-1,A12098")).getMessage(), "停车券格式错误");
     }
 
     @Test
@@ -94,7 +94,7 @@ class ParkingConsoleTest {
         String aTicket = console.park("A12098");
         assertDoesNotThrow(() -> console.fetch(aTicket));
 
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch(aTicket)).getMessage(), "停车券无效");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetch(aTicket)).getMessage(), "停车券无效");
     }
 
     @Test
@@ -105,7 +105,7 @@ class ParkingConsoleTest {
         assertDoesNotThrow(() -> console.fetch(aTicket));
         console.park("B12598");
 
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch(aTicket)).getMessage(), "停车券无效");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetch(aTicket)).getMessage(), "停车券无效");
     }
 
     @Deprecated
@@ -113,9 +113,9 @@ class ParkingConsoleTest {
     void deprecated_should_throw_exception_with_message_when_fetch_given_ticket_information_is_not_correct() throws SQLException, InvalidInput {
         console.init("A:8,B:10");
 
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld("C,1,A12098")).getMessage(), "停车券格式错误");
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld("A,9,A12098")).getMessage(), "没有这个车位");
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld("B,-1,A12098")).getMessage(), "停车券格式错误");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetchOld("C,1,A12098")).getMessage(), "停车券格式错误");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetchOld("A,9,A12098")).getMessage(), "没有这个车位");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetchOld("B,-1,A12098")).getMessage(), "停车券格式错误");
     }
 
     @Deprecated
@@ -126,7 +126,7 @@ class ParkingConsoleTest {
         String aTicket = console.park("A12098");
         assertDoesNotThrow(() -> console.fetchOld(aTicket));
 
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld(aTicket)).getMessage(), "该车位未停放车辆");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetchOld(aTicket)).getMessage(), "该车位未停放车辆");
     }
 
     @Deprecated
@@ -138,6 +138,6 @@ class ParkingConsoleTest {
         assertDoesNotThrow(() -> console.fetchOld(aTicket));
         console.park("B12598");
 
-        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld(aTicket)).getMessage(), "车牌号不匹配");
+        assertEquals(assertThrows(InvalidTicket.class, () -> console.fetchOld(aTicket)).getMessage(), "车牌号不匹配");
     }
 }

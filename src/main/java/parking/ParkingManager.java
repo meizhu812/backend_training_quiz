@@ -1,6 +1,7 @@
 package parking;
 
-import parking.exceptions.InvalidTicketException;
+import parking.exceptions.InvalidTicket;
+import parking.exceptions.ParkingLotFull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -22,16 +23,16 @@ public class ParkingManager implements AutoCloseable {
         statusRepo.init(initPlaces);
     }
 
-    public ParkingSpace parkCar(String plateNo) throws SQLException {
+    public ParkingSpace parkCar(String plateNo) throws SQLException, ParkingLotFull {
         return buddy.parkCar(plateNo);
     }
 
-    public String fetchCar(ParkingSpace ticket) throws SQLException, InvalidTicketException {
+    public String fetchCar(ParkingSpace ticket) throws SQLException, InvalidTicket {
         return buddy.fetchCar(ticket);
     }
 
     @Deprecated
-    public String fetchCarOld(ParkingSpace ticket) throws SQLException, InvalidTicketException {
+    public String fetchCarOld(ParkingSpace ticket) throws SQLException, InvalidTicket {
         return buddy.fetchCarOld(ticket);
     }
 
