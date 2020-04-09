@@ -1,8 +1,8 @@
 package repository;
 
 final class TableColumn {
-    private boolean isKey;
-    private String columnName;
+    private final boolean isKey;
+    private final String columnName;
 
     TableColumn(boolean isKey, String columnName) {
         this.isKey = isKey;
