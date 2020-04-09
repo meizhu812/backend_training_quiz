@@ -113,7 +113,7 @@ public class ParkingConsole implements AutoCloseable {
         }
     }
 
-    public void init(String initString) throws SQLException, InvalidInput {
+    void init(String initString) throws SQLException, InvalidInput {
         Matcher matcher = Regex.InitRegex.getMatcher(initString);
         List<ParkingSpace> initPlaces = Stream.concat(
                 IntStream.rangeClosed(1, Integer.parseInt(matcher.group("countA")))
@@ -124,13 +124,13 @@ public class ParkingConsole implements AutoCloseable {
         manager.initParkingPlaces(initPlaces);
     }
 
-    public String park(String carNumber) throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
+    String park(String carNumber) throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
         Regex.PlateNo.validate(carNumber);
         ParkingSpace space = manager.parkCar(carNumber);
         return String.format("%s,%d,%s", space.getRegion(), space.getSerial(), space.getCarNumber());
     }
 
-    public String fetch(String ticketString) throws SQLException, InvalidTicket {
+    String fetch(String ticketString) throws SQLException, InvalidTicket {
         try {
             Matcher matcher = Regex.Ticket.getMatcher(ticketString);
             ParkingSpace ticketSpace = new ParkingSpace(
@@ -144,7 +144,7 @@ public class ParkingConsole implements AutoCloseable {
     }
 
     @Deprecated
-    public String fetchOld(String ticketString) throws SQLException, InvalidTicket {
+    String fetchOld(String ticketString) throws SQLException, InvalidTicket {
         try {
             Matcher matcher = Regex.Ticket.getMatcher(ticketString);
             ParkingSpace ticketSpace = new ParkingSpace(

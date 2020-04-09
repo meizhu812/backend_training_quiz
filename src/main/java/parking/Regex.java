@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
-public enum Regex {
+enum Regex {
     //language=RegExp
     MainOption("[1234]", "选项"),
     //language=RegExp

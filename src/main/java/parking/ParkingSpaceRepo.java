@@ -2,5 +2,5 @@ package parking;
 
 import repository.BaseRepository;
 
-public class ParkingSpaceRepo extends BaseRepository<ParkingSpace> {
+class ParkingSpaceRepo extends BaseRepository<ParkingSpace> {
 }

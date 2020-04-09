@@ -1,3 +1,5 @@
+package parking;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import parking.*;
@@ -22,7 +24,7 @@ class ParkingConsoleTest {
     @BeforeAll
     static void beforeAll() throws SQLException, IOException {
         Properties properties = new Properties();
-        properties.load(App.class.getResourceAsStream("jdbc.properties"));
+        properties.load(ParkingConsole.class.getResourceAsStream("jdbc.properties"));
         connection = DriverManager.getConnection(
                 properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
         console.setConnection(connection);
