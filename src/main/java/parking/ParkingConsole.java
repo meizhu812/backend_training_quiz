@@ -1,9 +1,6 @@
 package parking;
 
-import parking.exceptions.ExitEvent;
-import parking.exceptions.CancelEvent;
-import parking.exceptions.InvalidInput;
-import parking.exceptions.InvalidTicketException;
+import parking.exceptions.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,6 +31,8 @@ public class ParkingConsole implements AutoCloseable {
     private static final String FETCH_PROMPT
             = "请输入停车券信息\n"
             + "格式为“停车场编号1，车位编号，车牌号”，如“A,1,A12098”：";
+    private static final String INVALID_TICKET_PROMPT
+            = "很抱歉，无法通过您提供的停车券为您找到相应的车辆，请您再次核对停车券是否有效！";
 
     private final Iterator<String> in;
     private final ParkingManager manager = new ParkingManager();
@@ -90,11 +89,10 @@ public class ParkingConsole implements AutoCloseable {
                     String[] ticketDetails = ticket.split(",");
                     System.out.printf("已将您的车牌号为%s的车辆停到%s停车场%s号车位，停车券为：%s，请您妥善保存。\n",
                             ticketDetails[2], ticketDetails[0], ticketDetails[1], ticket);
-                    break;
-                } catch (SQLIntegrityConstraintViolationException e) {
-                    System.out.println("错误：拥有该该车牌号的车辆已入场");
-                    break;
+                } catch (ParkingLotFullException | CarAlreadyInside e) {
+                    System.out.println(e.getMessage());
                 }
+                break;
             }
             case "3": {
                 try {
@@ -103,7 +101,7 @@ public class ParkingConsole implements AutoCloseable {
                     System.out.printf("已为您取到车牌号为%s的车辆，很高兴为您服务，祝您生活愉快!\n", car);
                     break;
                 } catch (InvalidTicketException e) {
-                    System.out.println("很抱歉，无法通过您提供的停车券为您找到相应的车辆，请您再次核对停车券是否有效！");
+                    System.out.println(INVALID_TICKET_PROMPT);
                     break;
                 }
             }
@@ -131,13 +129,17 @@ public class ParkingConsole implements AutoCloseable {
         return String.format("%s,%d,%s", space.getRegion(), space.getSerial(), space.getCarNumber());
     }
 
-    public String fetch(String ticketString) throws SQLException, InvalidInput {
-        Matcher matcher = Regex.Ticket.getMatcher(ticketString);
-        ParkingSpace ticketSpace = new ParkingSpace(
-                matcher.group("region"),
-                Integer.parseInt(matcher.group("serial")),
-                matcher.group("plate"));
-        return manager.fetchCar(ticketSpace);
+    public String fetch(String ticketString) throws SQLException {
+        try {
+            Matcher matcher = Regex.Ticket.getMatcher(ticketString);
+            ParkingSpace ticketSpace = new ParkingSpace(
+                    matcher.group("region"),
+                    Integer.parseInt(matcher.group("serial")),
+                    matcher.group("plate"));
+            return manager.fetchCar(ticketSpace);
+        } catch (InvalidInput invalidInput) {
+            throw new InvalidTicketException("停车券格式错误");
+        }
     }
 
     private void exit() {
