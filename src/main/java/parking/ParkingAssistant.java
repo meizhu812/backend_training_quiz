@@ -15,7 +15,7 @@ public class ParkingAssistant {
         this.spaceRepo = spaceRepo;
     }
 
-    public ParkingSpace parkCar(String carNumber) throws SQLException, ParkingLotFull {
+    public ParkingSpace parkCar(String carNumber) throws SQLException, ParkingLotFull, CarAlreadyInside {
         try {
             ParkingSpace nextPlace = spaceRepo.queryFirst("WHERE car_number IS NULL")
                     .orElseThrow(ParkingLotFull::new);

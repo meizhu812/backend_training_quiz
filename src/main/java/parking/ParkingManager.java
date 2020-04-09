@@ -1,5 +1,6 @@
 package parking;
 
+import parking.exceptions.CarAlreadyInside;
 import parking.exceptions.InvalidTicket;
 import parking.exceptions.ParkingLotFull;
 
@@ -23,7 +24,7 @@ public class ParkingManager implements AutoCloseable {
         statusRepo.init(initPlaces);
     }
 
-    public ParkingSpace parkCar(String plateNo) throws SQLException, ParkingLotFull {
+    public ParkingSpace parkCar(String plateNo) throws SQLException, ParkingLotFull, CarAlreadyInside {
         return buddy.parkCar(plateNo);
     }
 

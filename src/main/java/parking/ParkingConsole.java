@@ -1,6 +1,11 @@
 package parking;
 
-import parking.exceptions.*;
+import parking.exceptions.CancelEvent;
+import parking.exceptions.CarAlreadyInside;
+import parking.exceptions.ExitEvent;
+import parking.exceptions.InvalidInput;
+import parking.exceptions.InvalidTicket;
+import parking.exceptions.ParkingLotFull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -103,8 +108,7 @@ public class ParkingConsole implements AutoCloseable {
                 }
             }
             case "4": {
-                exit();
-                break;
+                throw new ExitEvent();
             }
         }
     }
@@ -120,7 +124,7 @@ public class ParkingConsole implements AutoCloseable {
         manager.initParkingPlaces(initPlaces);
     }
 
-    public String park(String carNumber) throws SQLException, InvalidInput, ParkingLotFull {
+    public String park(String carNumber) throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
         Regex.PlateNo.validate(carNumber);
         ParkingSpace space = manager.parkCar(carNumber);
         return String.format("%s,%d,%s", space.getRegion(), space.getSerial(), space.getCarNumber());

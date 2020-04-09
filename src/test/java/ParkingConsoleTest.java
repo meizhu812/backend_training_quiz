@@ -35,7 +35,7 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_return_ticket_information_when_park_given_init_and_car_and_general_boy() throws SQLException, InvalidInput {
+    void should_return_ticket_information_when_park_given_init_and_car_and_general_boy() throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
         console.init("A:2,B:2");
 
         String aTicket = console.park("A12098");
@@ -47,7 +47,7 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_throw_exception_with_message_when_park_given_init_and_car_and_general_boy() throws SQLException, InvalidInput {
+    void should_throw_exception_with_message_when_park_given_init_and_car_and_general_boy() throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
         console.init("A:1,B:1");
         console.park("A12908");
         console.park("B38201");
@@ -55,14 +55,14 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_throw_exception_with_message_that_when_parking_a_car_that_is_already_inside() throws SQLException, InvalidInput {
+    void should_throw_exception_with_message_that_when_parking_a_car_that_is_already_inside() throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
         console.init("A:2,B:2");
         console.park("A12345");
         assertEquals(assertThrows(CarAlreadyInside.class, () -> console.park("A12345")).getMessage(), "错误：车牌号为A12345的车辆已入场");
     }
 
     @Test
-    void should_return_car_information_when_fetch_given_ticket_and_car() throws SQLException, InvalidInput, InvalidTicket {
+    void should_return_car_information_when_fetch_given_ticket_and_car() throws SQLException, InvalidInput, InvalidTicket, ParkingLotFull, CarAlreadyInside {
         console.init("A:8,B:10");
 
         String aTicket = console.park("A12198");
@@ -88,7 +88,7 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_throw_exception_with_message_when_fetch_given_spacee_has_no_car() throws SQLException, InvalidInput {
+    void should_throw_exception_with_message_when_fetch_given_spacee_has_no_car() throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
         console.init("A:8,B:10");
 
         String aTicket = console.park("A12098");
@@ -98,7 +98,7 @@ class ParkingConsoleTest {
     }
 
     @Test
-    void should_throw_exception_with_message_when_fetch_given_space_is_other_car() throws SQLException, InvalidInput {
+    void should_throw_exception_with_message_when_fetch_given_space_is_other_car() throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
         console.init("A:8,B:10");
 
         String aTicket = console.park("A12098");
@@ -120,7 +120,7 @@ class ParkingConsoleTest {
 
     @Deprecated
     @Test
-    void deprecated_should_throw_exception_with_message_when_fetch_given_spacee_has_no_car() throws SQLException, InvalidInput {
+    void deprecated_should_throw_exception_with_message_when_fetch_given_spacee_has_no_car() throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
         console.init("A:8,B:10");
 
         String aTicket = console.park("A12098");
@@ -131,7 +131,7 @@ class ParkingConsoleTest {
 
     @Deprecated
     @Test
-    void deprecated_should_throw_exception_with_message_when_fetch_given_space_is_other_car() throws SQLException, InvalidInput {
+    void deprecated_should_throw_exception_with_message_when_fetch_given_space_is_other_car() throws SQLException, InvalidInput, ParkingLotFull, CarAlreadyInside {
         console.init("A:8,B:10");
 
         String aTicket = console.park("A12098");

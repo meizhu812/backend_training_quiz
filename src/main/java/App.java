@@ -12,7 +12,6 @@ public class App {
     public static void main(String[] args) throws SQLException, IOException {
         Properties properties = new Properties();
         properties.load(App.class.getResourceAsStream("jdbc.properties"));
-        System.out.println(properties);
         try (Connection connection = DriverManager.getConnection(
                 properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
              ParkingConsole console = new ParkingConsole(new ScannerFilter())) {
