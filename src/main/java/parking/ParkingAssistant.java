@@ -22,12 +22,12 @@ public class ParkingAssistant {
             nextPlace.setCarNumber(carNumber);
             spaceRepo.updateByEntity(nextPlace);
             return nextPlace;
-        } catch (SQLIntegrityConstraintViolationException e ){
+        } catch (SQLIntegrityConstraintViolationException e) {
             throw new CarAlreadyInside(carNumber);
         }
     }
 
-    public String fetchCar(ParkingSpace ticket) throws SQLException {
+    public String fetchCar(ParkingSpace ticket) throws SQLException, InvalidTicketException {
         ParkingSpace empty = new ParkingSpace(ticket.getRegion(), ticket.getSerial(), null);
         if (spaceRepo.replaceByEntity(ticket, empty) == 0) {
             throw new InvalidTicketException("停车券无效");
@@ -36,7 +36,7 @@ public class ParkingAssistant {
     }
 
     @Deprecated
-    public String fetchCarOld(ParkingSpace ticket) throws SQLException {
+    public String fetchCarOld(ParkingSpace ticket) throws SQLException, InvalidTicketException {
         ParkingSpace parkedCar = spaceRepo.queryByKeys(ticket.getRegion(), ticket.getSerial())
                 .orElseThrow(() -> new InvalidTicketException("没有这个车位"));
         String plateNo = Optional.ofNullable(parkedCar.getCarNumber()).orElseThrow(() -> new InvalidTicketException("该车位未停放车辆"));

@@ -126,7 +126,7 @@ public class ParkingConsole implements AutoCloseable {
         return String.format("%s,%d,%s", space.getRegion(), space.getSerial(), space.getCarNumber());
     }
 
-    public String fetch(String ticketString) throws SQLException {
+    public String fetch(String ticketString) throws SQLException, InvalidTicketException {
         try {
             Matcher matcher = Regex.Ticket.getMatcher(ticketString);
             ParkingSpace ticketSpace = new ParkingSpace(
@@ -140,7 +140,7 @@ public class ParkingConsole implements AutoCloseable {
     }
 
     @Deprecated
-    public String fetchOld(String ticketString) throws SQLException {
+    public String fetchOld(String ticketString) throws SQLException, InvalidTicketException {
         try {
             Matcher matcher = Regex.Ticket.getMatcher(ticketString);
             ParkingSpace ticketSpace = new ParkingSpace(
