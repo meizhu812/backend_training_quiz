@@ -75,9 +75,9 @@ class ParkingConsoleTest {
     void should_throw_exception_with_message_when_fetch_given_ticket_information_is_not_correct() throws SQLException, InvalidInput {
         console.init("A:8,B:10");
 
-        assertThrows(InvalidInput.class, () -> console.fetch("C,1,A12098"), "输入错误！ -> 不合法的停车券\n");
+        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch("C,1,A12098")).getMessage(), "停车券格式错误");
         assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch("A,9,A12098")).getMessage(), "停车券无效");
-        assertEquals(assertThrows(InvalidInput.class, () -> console.fetch("B,-1,A12098")).getMessage(), "输入错误！ -> 不合法的停车券\n");
+        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch("B,-1,A12098")).getMessage(), "停车券格式错误");
     }
 
     @Test
