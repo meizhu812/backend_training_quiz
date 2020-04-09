@@ -139,6 +139,20 @@ public class ParkingConsole implements AutoCloseable {
         }
     }
 
+    @Deprecated
+    public String fetchOld(String ticketString) throws SQLException {
+        try {
+            Matcher matcher = Regex.Ticket.getMatcher(ticketString);
+            ParkingSpace ticketSpace = new ParkingSpace(
+                    matcher.group("region"),
+                    Integer.parseInt(matcher.group("serial")),
+                    matcher.group("plate"));
+            return manager.fetchCarOld(ticketSpace);
+        } catch (InvalidInput invalidInput) {
+            throw new InvalidTicketException("停车券格式错误");
+        }
+    }
+
     private void exit() {
         System.out.println("系统已退出");
     }

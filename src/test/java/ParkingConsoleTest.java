@@ -59,7 +59,7 @@ class ParkingConsoleTest {
     void should_throw_exception_with_message_that_when_parking_a_car_that_is_already_inside() throws SQLException, InvalidInput {
         console.init("A:2,B:2");
         console.park("A12345");
-        assertEquals(assertThrows(CarAlreadyInside.class,()->console.park("A12345")).getMessage(),"错误：车牌号为A12345的车辆已入场");
+        assertEquals(assertThrows(CarAlreadyInside.class, () -> console.park("A12345")).getMessage(), "错误：车牌号为A12345的车辆已入场");
     }
 
     @Test
@@ -95,7 +95,7 @@ class ParkingConsoleTest {
         String aTicket = console.park("A12098");
         console.fetch(aTicket);
 
-        assertThrows(InvalidTicketException.class, () -> console.fetch(aTicket));
+        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch(aTicket)).getMessage(),"停车券无效");
     }
 
     @Test
@@ -106,7 +106,39 @@ class ParkingConsoleTest {
         console.fetch(aTicket);
         console.park("B12598");
 
-        assertThrows(InvalidTicketException.class, () -> console.fetch(aTicket));
+        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetch(aTicket)).getMessage(),"停车券无效");
+    }
 
+    @Deprecated
+    @Test
+    void deprecated_should_throw_exception_with_message_when_fetch_given_ticket_information_is_not_correct() throws SQLException, InvalidInput {
+        console.init("A:8,B:10");
+
+        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld("C,1,A12098")).getMessage(), "停车券格式错误");
+        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld("A,9,A12098")).getMessage(), "没有这个车位");
+        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld("B,-1,A12098")).getMessage(), "停车券格式错误");
+    }
+
+    @Deprecated
+    @Test
+    void deprecated_should_throw_exception_with_message_when_fetch_given_spacee_has_no_car() throws SQLException, InvalidInput {
+        console.init("A:8,B:10");
+
+        String aTicket = console.park("A12098");
+        console.fetchOld(aTicket);
+
+        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld(aTicket)).getMessage(), "该车位未停放车辆");
+    }
+
+    @Deprecated
+    @Test
+    void deprecated_should_throw_exception_with_message_when_fetch_given_space_is_other_car() throws SQLException, InvalidInput {
+        console.init("A:8,B:10");
+
+        String aTicket = console.park("A12098");
+        console.fetchOld(aTicket);
+        console.park("B12598");
+
+        assertEquals(assertThrows(InvalidTicketException.class, () -> console.fetchOld(aTicket)).getMessage(), "车牌号不匹配");
     }
 }

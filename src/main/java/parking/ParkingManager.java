@@ -28,6 +28,11 @@ public class ParkingManager implements AutoCloseable {
         return buddy.fetchCar(ticket);
     }
 
+    @Deprecated
+    public String fetchCarOld(ParkingSpace ticket) throws SQLException {
+        return buddy.fetchCarOld(ticket);
+    }
+
     @Override
     public void close() {
         statusRepo.close();
