@@ -31,8 +31,6 @@ public class ParkingConsole implements AutoCloseable {
     private static final String FETCH_PROMPT
             = "请输入停车券信息\n"
             + "格式为“停车场编号1，车位编号，车牌号”，如“A,1,A12098”：";
-    private static final String INVALID_TICKET_PROMPT
-            = "很抱歉，无法通过您提供的停车券为您找到相应的车辆，请您再次核对停车券是否有效！";
 
     private final Iterator<String> in;
     private final ParkingManager manager = new ParkingManager();
@@ -101,7 +99,7 @@ public class ParkingConsole implements AutoCloseable {
                     System.out.printf("已为您取到车牌号为%s的车辆，很高兴为您服务，祝您生活愉快!\n", car);
                     break;
                 } catch (InvalidTicketException e) {
-                    System.out.println(INVALID_TICKET_PROMPT);
+                    System.out.println(e.getMessage());
                     break;
                 }
             }
