@@ -1,19 +1,19 @@
 package repository;
 
-public class TableColumn {
+final class TableColumn {
     private boolean isKey;
     private String columnName;
 
-    public TableColumn(boolean isKey, String columnName) {
+    TableColumn(boolean isKey, String columnName) {
         this.isKey = isKey;
         this.columnName = columnName;
     }
 
-    public boolean isKey() {
+    boolean isKey() {
         return isKey;
     }
 
-    public String getColumnName() {
+    String getColumnName() {
         return columnName;
     }
 }

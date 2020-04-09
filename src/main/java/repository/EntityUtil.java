@@ -8,23 +8,23 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class EntityUtil<E> {
+class EntityUtil<E> {
     protected final List<EntityField> entityFields;
-    private final Class<E> entityClass;
+    protected final Class<E> entityClass;
 
-    public EntityUtil(Class<E> entityClass) {
+    EntityUtil(Class<E> entityClass) {
         this.entityClass = entityClass;
         entityFields = EntityInspector.getEntityFields(entityClass);
     }
 
-    public void setAll(PreparedStatement statement, E entity) throws SQLException {
+    void setAll(PreparedStatement statement, E entity) throws SQLException {
         List<Method> allGetters = entityFields.stream()
                 .map(EntityField::getGetter)
                 .collect(Collectors.toList());
         setValues(statement, entity, allGetters);
     }
 
-    public void setUpdateByE(PreparedStatement statement, E entity) throws SQLException {
+    void setUpdateByE(PreparedStatement statement, E entity) throws SQLException {
         List<Method> updateGetters = entityFields.stream()
                 .sorted((f1, f2) -> Boolean.compare(f1.isKey(), f2.isKey()))
                 .map(EntityField::getGetter)
@@ -32,7 +32,7 @@ public class EntityUtil<E> {
         setValues(statement, entity, updateGetters);
     }
 
-    public void setReplaceByE(PreparedStatement statement, E oldEntity, E newEntity) throws SQLException {
+    void setReplaceByE(PreparedStatement statement, E oldEntity, E newEntity) throws SQLException {
         List<Method> newGetters = entityFields.stream()
                 .filter(field -> !field.isKey())
                 .map(EntityField::getGetter)
@@ -44,28 +44,13 @@ public class EntityUtil<E> {
         setValues(statement, oldEntity, oldGetters, newGetters.size());
     }
 
-    public void setKeyWheres(PreparedStatement statement, Object... values) throws SQLException {
+    void setKeyWheres(PreparedStatement statement, Object... values) throws SQLException {
         for (int i = 0; i < values.length; i++) {
             statement.setObject(i + 1, values[i]);
         }
     }
 
-    private void setValues(PreparedStatement statement, E entity, List<Method> getters) throws SQLException {
-        setValues(statement, entity, getters, 0);
-    }
-
-    private void setValues(PreparedStatement statement, E entity, List<Method> getters, int offset) throws SQLException {
-        for (int i = 0; i < getters.size(); i++) {
-            try {
-                Object data = getters.get(i).invoke(entity);
-                statement.setObject(i + offset + 1, data);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    public List<E> makeEntities(ResultSet resultSet) throws SQLException {
+    List<E> makeEntities(ResultSet resultSet) throws SQLException {
         List<E> resultList = new ArrayList<>();
         while (resultSet.next()) {
             resultList.add(makeEntity(resultSet));
@@ -90,6 +75,21 @@ public class EntityUtil<E> {
             return entityClass.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void setValues(PreparedStatement statement, E entity, List<Method> getters) throws SQLException {
+        setValues(statement, entity, getters, 0);
+    }
+
+    private void setValues(PreparedStatement statement, E entity, List<Method> getters, int offset) throws SQLException {
+        for (int i = 0; i < getters.size(); i++) {
+            try {
+                Object data = getters.get(i).invoke(entity);
+                statement.setObject(i + offset + 1, data);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

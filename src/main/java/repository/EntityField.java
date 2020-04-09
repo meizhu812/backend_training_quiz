@@ -2,26 +2,26 @@ package repository;
 
 import java.lang.reflect.Method;
 
-public class EntityField {
+final class EntityField {
     private boolean isKey;
     private Method setter;
     private Method getter;
 
-    public EntityField(boolean isKey, Method getter, Method setter) {
+    EntityField(boolean isKey, Method getter, Method setter) {
         this.isKey = isKey;
         this.getter = getter;
         this.setter = setter;
     }
 
-    public boolean isKey() {
+    boolean isKey() {
         return isKey;
     }
 
-    public Method getGetter() {
+    Method getGetter() {
         return getter;
     }
 
-    public Method getSetter() {
+    Method getSetter() {
         return setter;
     }
 }

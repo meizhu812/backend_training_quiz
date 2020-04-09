@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SqlUtil<E> {
+class SqlUtil<E> {
     protected final String tableName;
     protected final List<TableColumn> tableColumns;
 
-    public SqlUtil(Class<E> entityClass) {
+    SqlUtil(Class<E> entityClass) {
         tableName = EntityInspector.getTableName(entityClass);
         tableColumns = EntityInspector.getTableColumns(entityClass);
     }
@@ -68,11 +68,11 @@ public class SqlUtil<E> {
                 .collect(Collectors.joining(", "));
     }
 
-    public String getPlaceholders() {
+    protected String getPlaceholders() {
         return String.join(", ", Collections.nCopies(tableColumns.size(), "?"));
     }
 
-    public String getValuesSets() {
+    protected String getValuesSets() {
         return tableColumns.stream()
                 .filter(column -> !column.isKey())
                 .map(TableColumn::getColumnName)
@@ -80,14 +80,14 @@ public class SqlUtil<E> {
                 .collect(Collectors.joining(", "));
     }
 
-    public String getAllSets() {
+    protected String getAllSets() {
         return tableColumns.stream()
                 .map(TableColumn::getColumnName)
                 .map(col -> col + "=?")
                 .collect(Collectors.joining(", "));
     }
 
-    public String getKeyWheres() {
+    protected String getKeyWheres() {
         return tableColumns.stream()
                 .filter(TableColumn::isKey)
                 .map(TableColumn::getColumnName)
@@ -95,7 +95,7 @@ public class SqlUtil<E> {
                 .collect(Collectors.joining(" AND "));
     }
 
-    public String getAllWheres() {
+    protected String getAllWheres() {
         return tableColumns.stream()
                 .map(TableColumn::getColumnName)
                 .map(col -> col + "=?")

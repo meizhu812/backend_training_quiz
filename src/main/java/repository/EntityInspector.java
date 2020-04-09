@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class EntityInspector {
+final class EntityInspector {
     private EntityInspector() {
     }
 
@@ -27,7 +27,7 @@ public final class EntityInspector {
         return entityFields;
     }
 
-    public static String getTableName(Class<?> entityClass) {
+    static String getTableName(Class<?> entityClass) {
         return Optional.ofNullable(entityClass.getAnnotation(Table.class))
                 .map(Table::value)
                 .orElse(toSqlIdentifier(entityClass.getSimpleName()));
